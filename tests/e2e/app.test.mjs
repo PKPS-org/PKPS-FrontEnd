@@ -328,9 +328,53 @@ test("jadwal dibuat lalu dibatalkan; aktivitas dengan foto tampil", async () => 
   await context.close();
 });
 
+test("admin menambah pendamping, pendamping baru bisa login, lalu dinonaktifkan", async () => {
+  const email = `pend-${randomBytes(3).toString("hex")}@pkps.app`;
+  const name = "Pendamping E2E " + randomBytes(2).toString("hex");
+  const { context, page } = await authed(ADMIN);
+  await goto(page, "/pendampings/");
+  await loaded(page);
+  await page.getByRole("link", { name: "Pendamping", exact: true }).first().waitFor();
+  await page.getByRole("button", { name: "Tambah pendamping" }).click();
+  const dlg = page.getByRole("dialog");
+  await dlg.getByLabel("Nama *").fill(name);
+  await dlg.getByLabel("Email (untuk login) *").fill(email);
+  await dlg.getByLabel("Kata sandi *", { exact: true }).fill("sandiawal1");
+  await dlg.getByLabel("Ulangi kata sandi *").fill("salah123");
+  await dlg.getByRole("button", { name: "Tambah" }).click();
+  await dlg.getByRole("alert").getByText("confirmation does not match").waitFor();
+  await dlg.getByLabel("Ulangi kata sandi *").fill("sandiawal1");
+  await dlg.getByRole("button", { name: "Tambah" }).click();
+  await page.getByText("Pendamping berhasil ditambahkan.").waitFor();
+  const row = page.getByRole("row", { name: new RegExp(name) });
+  await row.waitFor();
+  assert.match(await row.innerText(), /Aktif/);
+
+  const r = await api("/api/auth/login", { method: "POST", body: { email, password: "sandiawal1" } });
+  assert.equal(r.status, 200, "pendamping baru bisa login");
+  assert.equal(r.data.data.user.role, "pendamping");
+
+  await row.getByRole("button", { name: `Nonaktifkan ${name}` }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Nonaktifkan" }).click();
+  await page.getByText("Pendamping dinonaktifkan.").waitFor();
+  await row.getByText("Nonaktif", { exact: true }).waitFor();
+  assert.equal((await api("/api/auth/login", { method: "POST", body: { email, password: "sandiawal1" } })).status, 403, "nonaktif tidak bisa login");
+  await shot(page, "pendampings");
+  await noLeakyText(page, "pendampings");
+  await context.close();
+
+  // Menu dan halaman ini khusus admin.
+  const p2 = await authed(PENDAMPING);
+  await goto(p2.page, "/dashboard/");
+  await loaded(p2.page);
+  assert.equal(await p2.page.locator('#admin-menu a[href$="/pendampings/"]').count(), 0, "menu Pendamping tidak tampil untuk pendamping");
+  await p2.context.close();
+  noIssues();
+});
+
 test("aksesibilitas terang dan gelap, tanpa luapan di 390 px", async () => {
   const pages = ["/login/", "/dashboard/", "/families/", `/families/detail/?id=${shared.familyId}`, "/families/new/", "/assessments/",
-    "/donations/", "/disbursements/", "/schedules/", "/activities/", "/reports/"];
+    "/donations/", "/disbursements/", "/schedules/", "/activities/", "/reports/", "/pendampings/"];
   const session = await login(ADMIN);
   for (const scheme of ["light", "dark"]) {
     const { context, page } = await newPage({ colorScheme: scheme, session });

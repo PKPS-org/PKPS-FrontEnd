@@ -16,6 +16,7 @@ const GROUPS = [
   ["Menu utama", [
     ["dasbor", "/dashboard/", "Dashboard", "layout-dashboard", ALL],
     ["keluarga", "/families/", "Data Keluarga", "users", STAFF],
+    ["pendamping", "/pendampings/", "Pendamping", "user-check", ["admin"]],
   ]],
   ["Keuangan", [
     ["donasi", "/donations/", "Donasi", "wallet", ALL],
