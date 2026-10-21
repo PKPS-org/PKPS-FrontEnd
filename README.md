@@ -22,10 +22,10 @@ Backend lokal perlu `ALLOWED_ORIGINS=http://localhost:5173`. Data demo: `go run 
 ```bash
 docker run -d --rm --name pkps-mongo-test -p 27018:27017 mongo:7
 npm run test:e2e                 # Chrome terpasang (CHROME_PATH untuk lokasi lain)
-npm run test:e2e:subpath         # sama, di bawah base path /pkps-apps
+npm run test:e2e:subpath         # sama, di bawah base path /PKPS-FrontEnd
 ```
 
-Runner membangun situs, mengisi DB unik `pkps_e2e_*_dev` dengan seed-demo, menyalakan backend (:18080) dan situs
+Runner mengharapkan backend di folder sebelah `../pkps-gocroot`. Ia membangun situs, mengisi DB unik `pkps_e2e_*_dev` dengan seed-demo, menyalakan backend (:18080) dan situs
 (:5173), lalu menguji: login per peran, penolakan akun keluarga, keluarga (buat, ubah, detail), verifikasi kebutuhan,
 penilaian, donasi + konfirmasi, distribusi + kwitansi, laporan cetak, ekspor Excel, jadwal, aktivitas dengan foto,
 axe terang/gelap, dan tanpa luapan di 390 px. Setiap tes gagal bila ada pelanggaran CSP atau galat skrip.
@@ -46,6 +46,7 @@ Cetak laporan dan kwitansi memakai `@media print` dan tombol "Cetak / Simpan PDF
 
 ## Deploy
 
-`../.github/workflows/frontend.yml`: build, check, lalu GitHub Pages. Dilewati selama variabel repo `API_BASE_URL`
+Repo: `erda-code/PKPS-FrontEnd` (situs proyek di `https://erda-code.github.io/PKPS-FrontEnd/`; dikembangkan di folder
+`pkps-frontend/` monorepo `pkps-apps`). `.github/workflows/pages.yml`: build, check, lalu GitHub Pages. Dilewati selama variabel repo `API_BASE_URL`
 (origin fungsi Cloud Functions) kosong. Base path dihitung dari nama repo; `PAGES_BASE_PATH` menimpanya
 (`root` = akar domain).
