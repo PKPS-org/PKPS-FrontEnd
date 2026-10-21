@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="id">
+<head>
+<!--@head-->
+<title>Masuk | PKPS</title>
+</head>
+<body class="bg-background text-foreground antialiased">
+  <div class="grid min-h-screen lg:grid-cols-[5fr_6fr]">
+    <aside class="relative isolate hidden overflow-hidden border-e border-layer-line bg-primary-800 text-white lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16">
+      <p class="inline-flex items-center gap-2.5 text-xl font-semibold"><span class="grid size-9 place-items-center rounded-lg bg-white/15"><!--@icon heart-handshake | size-5--></span> PKPS</p>
+      <div class="max-w-md">
+        <p class="text-4xl font-semibold leading-[1.15] tracking-tight xl:text-5xl">Pendampingan Keluarga Pra Sejahtera</p>
+        <p class="mt-5 text-[15px] leading-relaxed text-primary-100">Data keluarga binaan, penilaian kesejahteraan, donasi dan distribusi bantuan, jadwal pendampingan, dan laporan program dalam satu tempat.</p>
+      </div>
+      <p class="text-sm text-primary-100">Keluarga binaan memakai aplikasi mobile Keluarga Mandiri.</p>
+    </aside>
+    <div class="flex min-h-screen flex-col">
+      <header class="flex items-center justify-between px-4 py-4 sm:px-8">
+        <span class="lg:hidden"><!--@include logo--></span><span class="hidden lg:block"></span>
+        <!--@include theme-toggle-->
+      </header>
+      <main id="main" class="flex flex-1 items-center justify-center px-4 pb-14 pt-4 sm:px-8">
+        <div class="w-full max-w-md animate-rise">
+          <h1 class="text-3xl font-semibold tracking-tight">Masuk</h1>
+          <p class="mt-2 text-[15px] text-muted-foreground-1">Untuk admin, pendamping, dan donatur.</p>
+          <p id="notice" role="status" class="alert alert-info mt-5 hidden"></p>
+          <form id="form" method="post" class="mt-8 space-y-5" novalidate>
+            <div id="form-error" role="alert" class="alert alert-error hidden"></div>
+            <div>
+              <label for="email" class="label">Email</label>
+              <input id="email" name="email" type="email" autocomplete="username" required class="input">
+            </div>
+            <div>
+              <label for="password" class="label">Kata sandi</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" required class="input">
+            </div>
+            <button id="submit" type="submit" class="btn btn-primary btn-lg w-full">Masuk</button>
+          </form>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script type="module" src="/assets/js/pages/login.js"></script>
+</body>
+</html>

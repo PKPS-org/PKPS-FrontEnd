@@ -1,0 +1,205 @@
+/* Titik masuk Tailwind v4. Dikompilasi ke dist/assets/css/app.css oleh `npm run build:css`.
+   Sumber kelas: semua HTML dan JS di folder ini (otomatis, mengikuti .gitignore) + JS Preline.
+
+   Sistem desain PKPS: biru langit (utama) dan oranye (aksen) seperti aplikasi Laravel lama, latar kertas netral,
+   huruf Inter. Warna ada di assets/css/themes/pkps.css (token semantik Preline); file ini memuat font, bentuk
+   (bayangan, gerak), pustaka komponen terpusat (.btn, .card, .chip, ...), dan aturan cetak. */
+@import "tailwindcss";
+
+/* Preline UI: varian kelas dan token tema semantik (JS-nya tidak dipakai; laci dan dialog dibuat sendiri). */
+@import "../../node_modules/preline/variants.css";
+@import "../../node_modules/preline/theme.css";
+@import "./themes/pkps.css";
+
+/* Mode gelap lewat kelas .dark pada <html> (diatur theme-init.js dan common.js); sama dengan .dark milik Preline. */
+@custom-variant dark (&:where(.dark, .dark *));
+html.dark { color-scheme: dark; }
+
+/* ── Font dihosting sendiri (tanpa Google Fonts, supaya CSP font-src 'self') ── */
+@font-face {
+  font-family: "Inter Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("../fonts/inter-latin-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter Variable";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url("../fonts/inter-latin-ext-wght-normal.woff2") format("woff2-variations");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* Bayangan lembut kebiruan (bukan abu-abu murni) supaya kartu terasa menyatu dengan latar. */
+  --shadow-soft: 0 1px 2px rgb(10 40 55 / 0.05), 0 10px 28px -14px rgb(10 40 55 / 0.16);
+  --shadow-lift: 0 2px 4px rgb(10 40 55 / 0.06), 0 28px 56px -24px rgb(10 40 55 / 0.32);
+
+  --animate-rise: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-float: float 8s ease-in-out infinite;
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+}
+
+/* Aksen oranye sebagai warna semantik (bg-marker, text-marker-ink, ...). Nilainya dari token tema. */
+@theme inline {
+  --color-marker: var(--marker);
+  --color-marker-strong: var(--marker-strong);
+  --color-marker-soft: var(--marker-soft);
+  --color-marker-line: var(--marker-line);
+  --color-marker-ink: var(--marker-ink);
+}
+
+@layer base {
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  /* Anchor ke bagian tidak tertutup header lengket. */
+  [id] { scroll-margin-top: 5rem; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+  body { font-family: var(--font-sans); }
+  /* Teks yang dipilih disorot warna aksen. */
+  ::selection { background: color-mix(in oklab, var(--marker) 70%, transparent); color: var(--foreground); }
+  .dark ::selection { background: color-mix(in oklab, var(--marker) 38%, transparent); }
+  :where(h1, h2, h3) { text-wrap: balance; }
+  :where(p, li) { text-wrap: pretty; }
+  /* Fokus papan ketik selalu terlihat dan seragam (WCAG 2.4.7, 2.4.11). */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--primary-focus);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* ── Tata letak ── */
+  .container-page { @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8; }
+  .section { @apply py-16 sm:py-24; }
+
+  /* ── Merek ── */
+  .brand { @apply inline-flex items-center gap-2.5 rounded-lg font-display text-lg font-semibold tracking-tight whitespace-nowrap text-foreground sm:text-xl; }
+  /* Lambang PKPS: ubin biru dengan ikon putih. */
+  .brand-mark { @apply grid size-8 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground; }
+
+  /* ── Tombol ── */
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl border border-transparent px-4 py-2.5 text-sm font-semibold leading-5 whitespace-nowrap transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50; }
+  .btn-primary { @apply bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover; }
+  .btn-outline { @apply border-line-3 bg-layer text-foreground hover:bg-muted-hover; }
+  .btn-ghost { @apply text-foreground hover:bg-muted-hover; }
+  .btn-danger { @apply border-red-300 bg-layer text-red-800 hover:bg-red-50 dark:border-red-700 dark:text-red-200 dark:hover:bg-red-950; }
+  .btn-danger-solid { @apply bg-red-700 text-white hover:bg-red-800; }
+  .btn-sm { @apply rounded-lg px-3 py-1.5 text-sm; }
+  .btn-lg { @apply rounded-2xl px-6 py-3.5 text-base; }
+  .icon-btn { @apply inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-line-2 bg-layer text-foreground transition-colors hover:bg-muted-hover; }
+  .icon-btn:disabled { @apply cursor-not-allowed opacity-40 hover:bg-layer; }
+
+  /* ── Tautan ── */
+  /* Bergaris bawah bawaan: tautan tidak boleh hanya dibedakan lewat warna (WCAG 1.4.1). */
+  .link { @apply font-medium text-primary-700 underline decoration-primary-300/70 underline-offset-4 transition-colors hover:decoration-primary-700 dark:text-primary-300 dark:decoration-primary-700 dark:hover:decoration-primary-300; }
+
+  /* ── Permukaan ── */
+  .card { @apply rounded-2xl border border-layer-line bg-layer text-layer-foreground shadow-soft; }
+  .card-pad { @apply p-6 sm:p-8; }
+
+  /* ── Formulir ── */
+  .label { @apply mb-1.5 block text-sm font-medium text-foreground; }
+  .hint { @apply mt-1.5 text-xs text-muted-foreground-1; }
+  .input, .select, .textarea {
+    @apply block w-full rounded-xl border border-line-3 bg-layer px-3.5 py-2.5 text-sm text-layer-foreground transition-colors placeholder:text-muted-foreground-1 disabled:opacity-50;
+  }
+  .input:focus-visible, .select:focus-visible, .textarea:focus-visible { outline-offset: 0; border-color: var(--primary); }
+  .select {
+    @apply appearance-none pe-10 bg-no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718087' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 0.75rem center;
+    background-size: 1.125rem;
+  }
+
+  /* ── Pemberitahuan ── */
+  .alert { @apply rounded-xl border px-4 py-3 text-sm; }
+  .alert-error { @apply border-red-300 bg-red-50 text-red-900 dark:border-red-700 dark:bg-red-950 dark:text-red-100; }
+  .alert-success { @apply border-emerald-300 bg-emerald-50 text-emerald-900 dark:border-emerald-700 dark:bg-emerald-950 dark:text-emerald-100; }
+  .alert-info { @apply border-primary-200 bg-primary-50 text-primary-900 dark:border-primary-800 dark:bg-primary-950 dark:text-primary-100; }
+
+  /* ── Lencana status ── */
+  .chip { @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium whitespace-nowrap; }
+  .chip-dot::before { content: ""; @apply size-1.5 rounded-full bg-current; }
+  .chip-neutral { @apply border-line-2 bg-muted text-foreground; }
+  .chip-primary { @apply border-primary-200 bg-primary-50 text-primary-800 dark:border-primary-700 dark:bg-primary-950 dark:text-primary-100; }
+  .chip-marker { @apply border-marker-line bg-marker-soft text-marker-ink; }
+  .chip-success { @apply border-emerald-300 bg-emerald-50 text-emerald-900 dark:border-emerald-700 dark:bg-emerald-950 dark:text-emerald-100; }
+  .chip-danger { @apply border-red-300 bg-red-50 text-red-900 dark:border-red-700 dark:bg-red-950 dark:text-red-100; }
+
+  /* ── Navigasi samping panel ── */
+  .side-link { @apply flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted-hover; }
+  .side-link[aria-current="page"] { @apply bg-primary-50 text-primary-800 dark:bg-primary-950 dark:text-primary-100; }
+
+
+  /* ── Tab bergaya segmen ── */
+  .tab-list { @apply mb-6 inline-flex max-w-full flex-wrap gap-1 rounded-xl bg-muted p-1; }
+  .tab { @apply rounded-lg px-4 py-2 text-sm font-medium text-muted-foreground-1 transition-colors hover:text-foreground; }
+  .tab[aria-selected="true"] { @apply bg-layer text-foreground shadow-sm dark:bg-muted-hover; }
+
+  /* ── Tabel ── */
+  .tbl { @apply min-w-full divide-y divide-table-line text-sm; }
+  .tbl thead { @apply bg-muted; }
+  .tbl th { @apply whitespace-nowrap px-4 py-2.5 text-start text-xs font-semibold uppercase tracking-wide text-muted-foreground-1; }
+  .tbl td { @apply px-4 py-3 align-top; }
+  .tbl tbody tr { @apply transition-colors hover:bg-muted/60; }
+  .tbl tbody { @apply divide-y divide-table-line; }
+
+  /* ── Batang progres: <progress> bawaan memakai warna peramban (hijau/biru), jadi diganti token tema. ── */
+  .meter { @apply h-2 w-full overflow-hidden rounded-full; appearance: none; border: 0; background: var(--border-line-2); }
+  .meter::-webkit-progress-bar { background: var(--border-line-2); border-radius: 9999px; }
+  .meter::-webkit-progress-value { background: var(--primary); border-radius: 9999px; transition: width 0.3s ease; }
+  .meter::-moz-progress-bar { background: var(--primary); border-radius: 9999px; }
+
+  /* ── Laci samping (assets/js/drawer.js) ──
+     Meluncur lewat properti `translate` (Tailwind v4 memakainya, bukan `transform`). Saat dibuka, visibility langsung
+     terlihat agar isinya bisa difokus; saat ditutup, visibility menunggu luncuran selesai. */
+  .drawer { transition: translate 0.2s ease, visibility 0s linear 0.2s; }
+  .drawer.is-open { transition: translate 0.2s ease, visibility 0s; }
+
+  /* ── Dialog (elemen <dialog> bawaan) ── */
+  dialog.modal {
+    @apply m-auto w-[calc(100%-2rem)] max-w-md rounded-2xl border border-layer-line bg-layer p-0 text-layer-foreground shadow-lift;
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.2s ease, transform 0.2s ease, overlay 0.2s allow-discrete, display 0.2s allow-discrete;
+  }
+  dialog.modal::backdrop { background: rgb(6 22 30 / 0.55); backdrop-filter: blur(3px); }
+  @starting-style {
+    dialog.modal[open] { opacity: 0; transform: translateY(10px) scale(0.98); }
+  }
+
+  /* ── Galeri foto (aktivitas, bukti) ── */
+  .thumb { @apply aspect-[4/3] w-full rounded-xl border border-line-2 bg-muted object-cover; }
+
+  /* ── Kotak tanda tangan kwitansi ── */
+  .sign-box { @apply flex h-32 flex-col justify-between rounded-xl border border-dashed border-line-3 p-3 text-center text-sm; }
+}
+
+/* ── Cetak (laporan dan kwitansi): A4, tanpa navigasi dan tombol, warna terang ── */
+@page { size: A4; margin: 16mm 14mm; }
+@media print {
+  html, html.dark { color-scheme: light; }
+  body { background: #fff !important; color: #111 !important; }
+  .card { box-shadow: none !important; border-color: #ccc !important; background: #fff !important; color: #111 !important; }
+  .lg\:ps-64 { padding-inline-start: 0 !important; }
+  .print-area { max-width: none !important; padding: 0 !important; }
+  .chip { border-color: #999 !important; background: #fff !important; color: #111 !important; }
+  a { color: inherit !important; text-decoration: none !important; }
+  .tbl thead { background: #f1f5f9 !important; }
+  .break-avoid { break-inside: avoid; }
+}
