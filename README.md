@@ -46,7 +46,7 @@ Cetak laporan dan kwitansi memakai `@media print` dan tombol "Cetak / Simpan PDF
 
 ## Deploy
 
-Repo: `erda-code/PKPS-FrontEnd` (situs proyek di `https://erda-code.github.io/PKPS-FrontEnd/`; dikembangkan di folder
+Repo: `PKPS-org/PKPS-FrontEnd` (situs proyek di `https://pkps-org.github.io/PKPS-FrontEnd/`; dikembangkan di folder
 `pkps-frontend/` monorepo `pkps-apps`). `.github/workflows/pages.yml`: build, check, lalu GitHub Pages. Dilewati selama variabel repo `API_BASE_URL`
 (origin fungsi Cloud Functions) kosong. Base path dihitung dari nama repo; `PAGES_BASE_PATH` menimpanya
 (`root` = akar domain).
